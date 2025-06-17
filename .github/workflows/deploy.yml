@@ -47,6 +47,6 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
           script: |
-            cd ~/deploy
-            docker compose down
-            docker compose up -d --build
+            cd ~/cinepick
+            docker-compose down
+            docker-compose up -d --build
