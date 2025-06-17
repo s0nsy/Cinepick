@@ -12,17 +12,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+#      - name: Set up JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
 
-      - name: Set execute permission for gradlew
-        run: chmod +x ./gradlew
+#      - name: Set execute permission for gradlew
+#        run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew clean build --exclude-task test
+#      - name: Build with Gradle
+#        run: ./gradlew clean build --exclude-task test
+
+      - name: Copy jar to cinepick for Docker
+        run: |
+          mkdir -p cinepick/build/libs
+          cp build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar cinepick/build/libs/cinepick.jar
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
