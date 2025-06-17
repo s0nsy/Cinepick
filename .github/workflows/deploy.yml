@@ -24,14 +24,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test
 
-      - name: Copy jar to cinepick for Docker
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.KEY }}
-          source: build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar
-          target: /home/ubuntu/cinepick/cinepick.jar
-
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
