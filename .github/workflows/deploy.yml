@@ -2,55 +2,39 @@ name: CI/CD
 
 on:
   push:
-    branches: ["master"]
+    branches: ["docker"]
 
 jobs:
-  build-and-deploy:
+  compose-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
-      - name: Set execute permission for gradlew
-        run: chmod +x ./gradlew
+      - name: Build Docker image
+        run: docker build -t cinepick-image .
 
-      - name: Build with Gradle
-        run: ./gradlew clean build --exclude-task test
-
-      - name: Copy jar to Server
+      - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
-          source: "build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar"
-          target: "/home/ubuntu/deploy/"
-          debug: true
+          source: "compose.yml"
+          target: "~/cinepick"
+          overwrite: true
 
-      - name: Set execute permission on server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.KEY }}
-          script: chmod 755 /home/ubuntu/deploy/build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar
-
-      - name: Restart server
+      - name: Run Docker Compose on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
           script: |
-            sudo systemctl daemon-reload
-            sudo systemctl restart cinepick
+            cd ~/deploy
+            docker compose down
+            docker compose up -d --build
