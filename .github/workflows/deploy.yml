@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: ["refactor-ver"]
+    branches: ["master"]
 
 jobs:
   build-and-deploy:
