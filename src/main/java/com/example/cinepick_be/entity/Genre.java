@@ -1,6 +1,5 @@
 package com.example.cinepick_be.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,15 +23,15 @@ public class Genre {
    @ManyToMany(mappedBy="genres")
    private List<Mbti> mbtis= new ArrayList<>();
 
-
-   @ManyToMany(fetch = FetchType.EAGER)
-   @JoinTable(
-           name="genre_mood",
-           joinColumns = @JoinColumn(name="genre_id"),
-           inverseJoinColumns = @JoinColumn(name="mood_id")
-   )
-   @JsonIgnoreProperties("genres")
-   private List<Mood> moods = new ArrayList<>();
+//
+//   @ManyToMany(fetch = FetchType.EAGER)
+//   @JoinTable(
+//           name="genre_mood",
+//           joinColumns = @JoinColumn(name="genre_id"),
+//           inverseJoinColumns = @JoinColumn(name="mood_id")
+//   )
+//   @JsonIgnoreProperties("genres")
+//   private List<Mood> moods = new ArrayList<>();
 
 //   @ManyToMany(mappedBy = "genres")
 //   private List<Movie> movies = new ArrayList<>();
