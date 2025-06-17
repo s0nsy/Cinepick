@@ -1,0 +1,56 @@
+name: CI/CD
+
+on:
+  push:
+    branches: ["refactor-ver"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build --exclude-task test
+
+      - name: Copy jar to Server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
+          source: "build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar"
+          target: "/home/ubuntu/deploy/"
+          debug: true
+
+      - name: Set execute permission on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
+          script: chmod 755 /home/ubuntu/deploy/build/libs/cinepick_BE-0.0.1-SNAPSHOT.jar
+
+      - name: Restart server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
+          script: |
+            sudo systemctl daemon-reload
+            sudo systemctl restart cinepick
