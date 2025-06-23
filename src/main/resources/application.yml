@@ -10,7 +10,7 @@
 spring:
   application.name: cinepick_BE
   datasource:
-    url: jdbc:mysql://cinepick_rf-db:3306/cinepick_rf
+    url: jdbc:mysql://cinepick_rf-db:3307/cinepick_rf
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
