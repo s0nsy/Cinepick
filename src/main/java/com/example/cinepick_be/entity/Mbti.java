@@ -16,8 +16,7 @@ import java.util.List;
 @Table(name = "mbti")
 public class Mbti {
    @Id
-   @GeneratedValue(strategy= GenerationType.IDENTITY)
-   private int id;
+   private Long id;
 
    private String mbti;
 
@@ -55,18 +54,4 @@ public class Mbti {
          inverseJoinColumns = @JoinColumn(name = "genre_id")
    )
    private List<Genre> genres = new ArrayList<>();
-
-
-   public Mbti(int id, String description, String mbti, String person, String profileImage, String quote, String story) {
-      this.id=id;
-      this.description=description;
-      this.mbti=mbti;
-      this.person=person;
-      this.profileImage=profileImage;
-      this.quote=quote;
-      this.story=story;
-   }
-   public Mbti(List<Genre> genres){
-      this.genres=genres;
-   }
 }
