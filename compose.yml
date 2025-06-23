@@ -17,8 +17,8 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cinepick_rf
     volumes:
-      - ./docker_mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ~/cinepick/docker_mysql_data:/var/lib/mysqldocker rm -f cinepick-cinepick_rf-db-1
+      - ~/cinepick/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 3307:3306
     healthcheck:
