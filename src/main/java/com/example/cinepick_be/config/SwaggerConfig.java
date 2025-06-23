@@ -8,16 +8,15 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
 
-
 @Configuration
 @OpenAPIDefinition(
 
       info = @Info(title = "API Documentation", version = "v1"),
       security = @SecurityRequirement(name = "bearerAuth"),
       servers = {
-            @Server(url = "http://localhost:8080"), // 로컬 개발 서버 URL
             @Server(url = "http://52.78.3.251:8080"), // 원격 서버 URL
-//            @Server(url = "http://52.78.3.251:8081") // 도커 내 서버 URL
+            @Server(url = "http://localhost:8080"), // 로컬 개발 서버 URL
+//          @Server(url = "http://52.78.3.251:8081") // 도커 내 서버 URL
 
       }
 )
@@ -29,3 +28,4 @@ import org.springframework.context.annotation.Configuration;
 )
 public class SwaggerConfig {
 }
+
