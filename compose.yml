@@ -5,3 +5,21 @@ services:
       - .env
     ports:
       - 8080:8080
+    depends_on:
+      cinepick_rf-db:
+        condition: service_healthy
+
+
+  cinepick_rf-db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cinepick_rf
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin","ping"]
+      interval: 5s
+      retries: 10
+      start_period: 20s
