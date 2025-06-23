@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
       servers = {
             @Server(url = "http://localhost:8080"), // 로컬 개발 서버 URL
             @Server(url = "http://52.78.3.251:8080"), // 원격 서버 URL
-            @Server(url = "http://52.78.3.251:8081") // 도커 내 서버 URL
+//            @Server(url = "http://52.78.3.251:8081") // 도커 내 서버 URL
 
       }
 )
