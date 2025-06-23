@@ -19,7 +19,7 @@ services:
     volumes:
       - ./mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin","ping"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 5s
       retries: 10
       start_period: 20s
