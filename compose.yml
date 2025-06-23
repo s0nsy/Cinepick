@@ -15,7 +15,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: cinepick_rf-db
+      MYSQL_DATABASE: cinepick_rf
     volumes:
       - ./mysql_data:/var/lib/mysql
     healthcheck:
