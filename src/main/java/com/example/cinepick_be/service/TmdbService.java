@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -46,26 +47,21 @@ public class TmdbService {
    }
 
    // TMDB 영화 전체 조회
-   public ResponseEntity<String> getMovies() {
+   @Cacheable(value="movieAll")
+   public String getMovies() {
 
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/trending/movie/week")
             .queryParam("language", "ko-KR")
             .build()
             .toUriString();
-      ResponseEntity<String> response = getHeader(url);
 
-      System.out.println(response);
-      return response;
+      System.out.println(getHeader(url));
+      return getHeader(url).getBody();
    }
 
    // TMDB 영화 성향 별 조회
-   public ResponseEntity<String> getRecommendMovies(String username) {
-
-      User user = userRepository.findByUserId(username)
-            .orElseThrow(() -> new AccessDeniedException(""));
-
-      String mbti = user.getMbti().getMbti();
-
+   @Cacheable(value="mbtiMovie", key= "#mbti")
+   public String getRecommendMovies(String mbti) {
       List<Genre> userGenres = mbtiRepository.findGenresByMbtiId(mbti);
 
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/discover/movie")
@@ -76,13 +72,13 @@ public class TmdbService {
             .build()
             .toUriString();
 
-      ResponseEntity<String> response = getHeader(url);
-      return response;
+      return getHeader(url).getBody();
    }
 
 
    // TMDB 영화 찾기
-   public ResponseEntity<String> searchMovie(String keyword) {
+   @Cacheable(value="movieCache", key= "#keyword")
+   public String searchMovie(String keyword) {
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/search/movie")
             .queryParam("query", keyword)
             .queryParam("language", "ko-KR")
@@ -91,12 +87,13 @@ public class TmdbService {
 
       ResponseEntity<String> response = getHeader(url);
 
-      return response;
+      return response.getBody();
 
    }
 
    // TMDB 영화 필터링
-   public ResponseEntity<String> filterMovie(List<Integer> genres) {
+   @Cacheable(value="genreMovie", key="#genres.toString()")
+   public String filterMovie(List<Integer> genres) {
       String genre = genres.stream().map(String::valueOf).collect(Collectors.joining(","));
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/discover/movie")
             .queryParam("with_genres", genre)
@@ -104,12 +101,12 @@ public class TmdbService {
             .build()
             .toUriString();
 
-      ResponseEntity<String> response = getHeader(url);
 
-      return response;
+      return getHeader(url).getBody();
    }
 
    // TMDB 영화 별 시청 가능 서비스 조회
+   @Cacheable(value = "movieOTT", key="#movieId")
    public Map<String,List<String>> getWatchMovieService(Long movieId) throws JsonProcessingException {
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/movie")
             .pathSegment(String.valueOf(movieId))
@@ -139,19 +136,20 @@ public class TmdbService {
    }
 
    // TMDB 영화 상세 페이지
-   public  ResponseEntity<String> getMovieDetail(Long movieId){
+   @Cacheable(value="detailedMovieInfo", key="#movieId")
+   public String getMovieDetail(Long movieId){
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/movie")
             .pathSegment(String.valueOf(movieId))
             .queryParam("language", "ko-KR")
             .build()
             .toUriString();
       System.out.println("url: "+ url);
-      ResponseEntity<String> response= getHeader(url);
 
-      return response;
+      return getHeader(url).getBody();
    }
 
    // TMDB 영화 기본 정보 조회
+   @Cacheable(value="movieInfo", key="#movieId")
    public Map<String, String> getMovieInfo(Long movieId) throws JsonProcessingException {
       String url = UriComponentsBuilder.fromUriString("https://api.themoviedb.org/3/movie")
             .pathSegment(String.valueOf(movieId))
